@@ -13,6 +13,17 @@ namespace ECommPrice
 	{
 		static void Main(string[] args)
 		{
+			DateTime licenseTill = new DateTime(2023, 06, 30);
+			if (DateTime.Now > licenseTill)
+			{
+				Console.WriteLine("License Expired.");
+				return;
+			}
+			else
+			{
+				Console.WriteLine(string.Format("License valid till {0}.", licenseTill.Date.ToShortDateString()));
+			}
+
 			try
 			{
 				Console.WriteLine("Enter Excel File path and close the file before proceeding.");

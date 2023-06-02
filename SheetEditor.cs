@@ -30,7 +30,7 @@ namespace ECommPrice
 						SiteCrawler.GetDetailsFromMyntra(myntraURL[i].Text.Trim(), details);
 						if (details != null)
 						{
-							workSheet["B" + (i + 1)].Style.Color = Color.White;
+							workSheet["B" + (i + 1)].Style.Font.Color = Color.Black;
 							workSheet["B" + (i + 1)].Value = details.Title;
 
 							workSheet["C" + (i + 1)].Value = details.MRP;
@@ -43,7 +43,7 @@ namespace ECommPrice
 				{
 					Console.WriteLine(string.Format("Failed for Sheet Myntra, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
 					workSheet["B" + (i + 1)].Value = "Error while fetching details";
-					workSheet["B" + (i + 1)].Style.Color = Color.FromArgb(204, 0, 0);
+					workSheet["B" + (i + 1)].Style.Font.Color = Color.FromArgb(204, 0, 0);
 				}
 			}
 		}
@@ -67,7 +67,7 @@ namespace ECommPrice
 						SiteCrawler.GetDetailsFromFlipkart(flipkartURL[i].Text.Trim(), details);
 						if (details != null)
 						{
-							workSheet["B" + (i + 1)].Style.Color = Color.White;
+							workSheet["B" + (i + 1)].Style.Font.Color = Color.Black;
 							workSheet["B" + (i + 1)].Value = details.Title;
 
 							workSheet["C" + (i + 1)].Value = details.MRP;
@@ -80,7 +80,7 @@ namespace ECommPrice
 				{
 					Console.WriteLine(string.Format("Failed for Sheet Flipkart, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
 					workSheet["B" + (i + 1)].Value = "Error while fetching details";
-					workSheet["B" + (i + 1)].Style.Color = Color.FromArgb(204, 0, 0);
+					workSheet["B" + (i + 1)].Style.Font.Color = Color.FromArgb(204, 0, 0);
 				}
 			}
 		}
@@ -104,7 +104,7 @@ namespace ECommPrice
 						SiteCrawler.GetDetailsFromAmazon(amazonURL[i].Text.Trim(), details);
 						if (details != null)
 						{
-							workSheet["B" + (i + 1)].Style.Color = Color.White;
+							workSheet["B" + (i + 1)].Style.Font.Color = Color.Black;
 							workSheet["B" + (i + 1)].Value = details.Title;
 
 							workSheet["C" + (i + 1)].Value = details.MRP;
@@ -117,7 +117,7 @@ namespace ECommPrice
 				{
 					Console.WriteLine(string.Format("Failed for Sheet Amazon, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
 					workSheet["B" + (i + 1)].Value = "Error while fetching details";
-					workSheet["B" + (i + 1)].Style.Color = Color.FromArgb(204, 0, 0);
+					workSheet["B" + (i + 1)].Style.Font.Color = Color.FromArgb(204, 0, 0);
 				}
 			}
 		}
