@@ -33,12 +33,16 @@ namespace ECommPrice
 				// Validates file path
 				if (Regex.Matches(filePath, "^\".*\"$").Count == 1)
 				{
-					filePath =  filePath.Substring(1, filePath.Length - 2);
+					filePath = filePath.Substring(1, filePath.Length - 2);
 				}
 				while (!Path.IsPathRooted(filePath) && !File.Exists(filePath))
 				{
 					Console.WriteLine("Enter full path");
 					filePath = Console.ReadLine();
+					if (Regex.Matches(filePath, "^\".*\"$").Count == 1)
+					{
+						filePath = filePath.Substring(1, filePath.Length - 2);
+					}
 				}
 
 				Stopwatch stopwatch = new Stopwatch();
