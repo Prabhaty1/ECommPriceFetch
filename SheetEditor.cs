@@ -10,24 +10,23 @@ namespace ECommPrice
 {
 	public static class SheetEditor
 	{
-		public static void FillMyntraSheet(Workbook workbook, string filePath)
+		public static void FillAmazonSheet(Workbook workbook, string filePath)
 		{
-			// HTML not working.
-			//Initialize worksheet for Myntra Sheet
-			Worksheet workSheet = workbook.Worksheets["Myntra"];
-			var myntraURL = workSheet.Columns[0].ToList();
-			Details details = new Details();
-			Console.WriteLine("Working on Myntra Sheet");
+			//Initialize worksheet for Amazon Sheet
+			Worksheet workSheet = workbook.Worksheets["Amazon"];
+			var amazonURL = workSheet.Columns[0].ToList();
+			var details = new Details();
+			Console.WriteLine("Working on Amazon Sheet");
 
 			workSheet.Columns[2].NumberFormat = "₹#,##0.00";
 			workSheet.Columns[3].NumberFormat = "₹#,##0.00";
-			for (int i = 1; i < myntraURL.Count; i++)
+			for (int i = 1; i < amazonURL.Count; i++)
 			{
 				try
 				{
-					if (!string.IsNullOrEmpty(myntraURL[i].Text))
+					if (!string.IsNullOrEmpty(amazonURL[i].Text))
 					{
-						SiteCrawler.GetDetailsFromMyntra(myntraURL[i].Text.Trim(), details);
+						SiteCrawler.GetDetailsFromAmazon(amazonURL[i].Text.Trim(), details);
 						if (details != null)
 						{
 							workSheet["B" + (i + 1)].Style.Font.Color = Color.Black;
@@ -35,15 +34,17 @@ namespace ECommPrice
 
 							workSheet["C" + (i + 1)].Value = details.MRP;
 							workSheet["D" + (i + 1)].Value = details.Price;
-							Console.WriteLine(i + " Row Updated (Myntra)");
+							Console.WriteLine(i + " Row Updated (Amazon)");
 						}
 					}
 				}
 				catch (Exception ex)
 				{
-					Console.WriteLine(string.Format("Failed for Sheet Myntra, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
-					workSheet["B" + (i + 1)].Value = "Error while fetching details";
+					Console.WriteLine(string.Format("Failed for Sheet Amazon, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
+					workSheet["B" + (i + 1)].Value = ex.Message;
 					workSheet["B" + (i + 1)].Style.Font.Color = Color.FromArgb(204, 0, 0);
+					workSheet["C" + (i + 1)].Value = "";
+					workSheet["D" + (i + 1)].Value = "";
 				}
 			}
 		}
@@ -79,29 +80,32 @@ namespace ECommPrice
 				catch (Exception ex)
 				{
 					Console.WriteLine(string.Format("Failed for Sheet Flipkart, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
-					workSheet["B" + (i + 1)].Value = "Error while fetching details";
+					workSheet["B" + (i + 1)].Value = ex.Message;
 					workSheet["B" + (i + 1)].Style.Font.Color = Color.FromArgb(204, 0, 0);
+					workSheet["C" + (i + 1)].Value = "";
+					workSheet["D" + (i + 1)].Value = "";
 				}
 			}
 		}
 
-		public static void FillAmazonSheet(Workbook workbook, string filePath)
+		public static void FillMyntraSheet(Workbook workbook, string filePath)
 		{
-			//Initialize worksheet for Amazon Sheet
-			Worksheet workSheet = workbook.Worksheets["Amazon"];
-			var amazonURL = workSheet.Columns[0].ToList();
-			var details = new Details();
-			Console.WriteLine("Working on Amazon Sheet");
+			// HTML not working.
+			//Initialize worksheet for Myntra Sheet
+			Worksheet workSheet = workbook.Worksheets["Myntra"];
+			var myntraURL = workSheet.Columns[0].ToList();
+			Details details = new Details();
+			Console.WriteLine("Working on Myntra Sheet");
 
 			workSheet.Columns[2].NumberFormat = "₹#,##0.00";
 			workSheet.Columns[3].NumberFormat = "₹#,##0.00";
-			for (int i = 1; i < amazonURL.Count; i++)
+			for (int i = 1; i < myntraURL.Count; i++)
 			{
 				try
 				{
-					if (!string.IsNullOrEmpty(amazonURL[i].Text))
+					if (!string.IsNullOrEmpty(myntraURL[i].Text))
 					{
-						SiteCrawler.GetDetailsFromAmazon(amazonURL[i].Text.Trim(), details);
+						SiteCrawler.GetDetailsFromMyntra(myntraURL[i].Text.Trim(), details);
 						if (details != null)
 						{
 							workSheet["B" + (i + 1)].Style.Font.Color = Color.Black;
@@ -109,15 +113,17 @@ namespace ECommPrice
 
 							workSheet["C" + (i + 1)].Value = details.MRP;
 							workSheet["D" + (i + 1)].Value = details.Price;
-							Console.WriteLine(i + " Row Updated (Amazon)");
+							Console.WriteLine(i + " Row Updated (Myntra)");
 						}
 					}
 				}
 				catch (Exception ex)
 				{
-					Console.WriteLine(string.Format("Failed for Sheet Amazon, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
-					workSheet["B" + (i + 1)].Value = "Error while fetching details";
+					Console.WriteLine(string.Format("Failed for Sheet Myntra, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
+					workSheet["B" + (i + 1)].Value = ex.Message;
 					workSheet["B" + (i + 1)].Style.Font.Color = Color.FromArgb(204, 0, 0);
+					workSheet["C" + (i + 1)].Value = "";
+					workSheet["D" + (i + 1)].Value = "";
 				}
 			}
 		}

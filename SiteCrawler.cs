@@ -15,10 +15,10 @@ namespace ECommPrice
 		{
 			using (var client = new WebClient())
 			{
-				// Download the HTML
-				//string html = client.DownloadString(amazonURL);
+				Headers.CreateHeaderForAmazon(client);
 
-				string html = GetHtmlString(amazonURL, "amazon");
+				// Download the HTML
+				string html = client.DownloadString(amazonURL);
 
 				// Now feed it to HTML Agility Pack:
 				HtmlDocument doc = new HtmlDocument();
@@ -108,12 +108,12 @@ namespace ECommPrice
 		{
 			using (var client = new WebClient())
 			{
-				//// Download the HTML
-				//html = client.DownloadString(MyntraURL);
+				Headers.CreateHeaderForMyntra(client);
+
+				// Download the HTML
+				string html = client.DownloadString(MyntraURL);
 
 				//// Now feed it to HTML Agility Pack:
-				string html = GetHtmlString(MyntraURL, "myntra");
-
 				HtmlDocument doc = new HtmlDocument();
 				doc.LoadHtml(html);
 				if (string.IsNullOrEmpty(html))
@@ -145,33 +145,6 @@ namespace ECommPrice
 				{
 					details.MRP = details.Price;
 				}
-			}
-		}
-
-		public static string GetHtmlString(string url, string website)
-		{
-			HttpWebResponse response = null;
-
-			var header = new Headers();
-			if (website == "myntra")
-			{
-				response = header.GetHttpWebResponseForMyntra(url);
-			}
-			if (website == "amazon")
-			{
-				response = header.GetHttpWebResponseForAmazon(url);
-			}
-
-			if (response.StatusCode != HttpStatusCode.OK)
-			{
-				return null;
-			}
-
-			Encoding encoding = Encoding.UTF8;
-			using (var reader = new StreamReader(response.GetResponseStream(), encoding))
-			{
-				string responseText = reader.ReadToEnd();
-				return responseText;
 			}
 		}
 	}
