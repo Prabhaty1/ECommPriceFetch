@@ -1,4 +1,5 @@
 ﻿using Spire.Xls;
+using Spire.Xls.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,7 +11,7 @@ namespace ECommPrice
 {
 	public static class SheetEditor
 	{
-		public static void FillAmazonSheet(Workbook workbook, string filePath)
+		public static void FillAmazonSheet(Workbook workbook)
 		{
 			//Initialize worksheet for Amazon Sheet
 			Worksheet workSheet = workbook.Worksheets["Amazon"];
@@ -20,36 +21,20 @@ namespace ECommPrice
 
 			workSheet.Columns[2].NumberFormat = "₹#,##0.00";
 			workSheet.Columns[3].NumberFormat = "₹#,##0.00";
-			for (int i = 1; i < amazonURL.Count; i++)
-			{
-				try
-				{
-					if (!string.IsNullOrEmpty(amazonURL[i].Text))
-					{
-						SiteCrawler.GetDetailsFromAmazon(amazonURL[i].Text.Trim(), details);
-						if (details != null)
-						{
-							workSheet["B" + (i + 1)].Style.Font.Color = Color.Black;
-							workSheet["B" + (i + 1)].Value = details.Title;
 
-							workSheet["C" + (i + 1)].Value = details.MRP;
-							workSheet["D" + (i + 1)].Value = details.Price;
-							Console.WriteLine(i + " Row Updated (Amazon)");
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine(string.Format("Failed for Sheet Amazon, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
-					workSheet["B" + (i + 1)].Value = ex.Message;
-					workSheet["B" + (i + 1)].Style.Font.Color = Color.FromArgb(204, 0, 0);
-					workSheet["C" + (i + 1)].Value = "";
-					workSheet["D" + (i + 1)].Value = "";
-				}
+			for (int i = 1; i < amazonURL.Count; i = i + 5)
+			{
+				Parallel.Invoke(
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, amazonURL, i, "Amazon"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, amazonURL, i + 1, "Amazon"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, amazonURL, i + 2, "Amazon"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, amazonURL, i + 3, "Amazon"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, amazonURL, i + 4, "Amazon")
+				);
 			}
 		}
 
-		public static void FillFlipkartSheet(Workbook workbook, string filePath)
+		public static void FillFlipkartSheet(Workbook workbook)
 		{
 			//Initialize worksheet for Flipkart Sheet
 			Worksheet workSheet = workbook.Worksheets["Flipkart"];
@@ -59,36 +44,20 @@ namespace ECommPrice
 
 			workSheet.Columns[2].NumberFormat = "₹#,##0.00";
 			workSheet.Columns[3].NumberFormat = "₹#,##0.00";
-			for (int i = 1; i < flipkartURL.Count; i++)
-			{
-				try
-				{
-					if (!string.IsNullOrEmpty(flipkartURL[i].Text))
-					{
-						SiteCrawler.GetDetailsFromFlipkart(flipkartURL[i].Text.Trim(), details);
-						if (details != null)
-						{
-							workSheet["B" + (i + 1)].Style.Font.Color = Color.Black;
-							workSheet["B" + (i + 1)].Value = details.Title;
 
-							workSheet["C" + (i + 1)].Value = details.MRP;
-							workSheet["D" + (i + 1)].Value = details.Price;
-							Console.WriteLine(i + " Row Updated (Flipkart)");
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine(string.Format("Failed for Sheet Flipkart, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
-					workSheet["B" + (i + 1)].Value = ex.Message;
-					workSheet["B" + (i + 1)].Style.Font.Color = Color.FromArgb(204, 0, 0);
-					workSheet["C" + (i + 1)].Value = "";
-					workSheet["D" + (i + 1)].Value = "";
-				}
+			for (int i = 1; i < flipkartURL.Count; i = i + 5)
+			{
+				Parallel.Invoke(
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, flipkartURL, i, "Flipkart"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, flipkartURL, i + 1, "Flipkart"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, flipkartURL, i + 2, "Flipkart"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, flipkartURL, i + 3, "Flipkart"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, flipkartURL, i + 4, "Flipkart")
+				);
 			}
 		}
 
-		public static void FillMyntraSheet(Workbook workbook, string filePath)
+		public static void FillMyntraSheet(Workbook workbook)
 		{
 			// HTML not working.
 			//Initialize worksheet for Myntra Sheet
@@ -99,32 +68,16 @@ namespace ECommPrice
 
 			workSheet.Columns[2].NumberFormat = "₹#,##0.00";
 			workSheet.Columns[3].NumberFormat = "₹#,##0.00";
-			for (int i = 1; i < myntraURL.Count; i++)
-			{
-				try
-				{
-					if (!string.IsNullOrEmpty(myntraURL[i].Text))
-					{
-						SiteCrawler.GetDetailsFromMyntra(myntraURL[i].Text.Trim(), details);
-						if (details != null)
-						{
-							workSheet["B" + (i + 1)].Style.Font.Color = Color.Black;
-							workSheet["B" + (i + 1)].Value = details.Title;
 
-							workSheet["C" + (i + 1)].Value = details.MRP;
-							workSheet["D" + (i + 1)].Value = details.Price;
-							Console.WriteLine(i + " Row Updated (Myntra)");
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine(string.Format("Failed for Sheet Myntra, URL at [A:{0}], Error : {1}", (i + 1), ex.Message));
-					workSheet["B" + (i + 1)].Value = ex.Message;
-					workSheet["B" + (i + 1)].Style.Font.Color = Color.FromArgb(204, 0, 0);
-					workSheet["C" + (i + 1)].Value = "";
-					workSheet["D" + (i + 1)].Value = "";
-				}
+			for (int i = 1; i < myntraURL.Count; i = i + 5)
+			{
+				Parallel.Invoke(
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, myntraURL, i, "Myntra"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, myntraURL, i + 1, "Myntra"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, myntraURL, i + 2, "Myntra"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, myntraURL, i + 3, "Myntra"),
+					() => new GetAndSaveData().GetAndSaveDetailsToExcelSheet(workSheet, myntraURL, i + 4, "Myntra")
+				);
 			}
 		}
 

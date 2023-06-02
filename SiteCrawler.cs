@@ -10,7 +10,6 @@ namespace ECommPrice
 {
 	public static class SiteCrawler
 	{
-
 		public static void GetDetailsFromAmazon(string amazonURL, Details details)
 		{
 			using (var client = new WebClient())
@@ -19,15 +18,15 @@ namespace ECommPrice
 
 				// Download the HTML
 				string html = client.DownloadString(amazonURL);
-
-				// Now feed it to HTML Agility Pack:
-				HtmlDocument doc = new HtmlDocument();
-				doc.LoadHtml(html);
 				if (string.IsNullOrEmpty(html))
 				{
 					details.Title = "Page Not Found";
 					return;
 				}
+
+				// Now feed it to HTML Agility Pack:
+				HtmlDocument doc = new HtmlDocument();
+				doc.LoadHtml(html);
 
 				var titleList = doc.DocumentNode.SelectNodes("//span[@id='productTitle']");
 				if (titleList != null)
@@ -47,14 +46,7 @@ namespace ECommPrice
 					details.Price = priceList.FirstOrDefault().InnerText.Trim();
 				}
 
-				if (string.IsNullOrEmpty(details.Title))
-				{
-					details.Title = "Page Not Found";
-				}
-				if (string.IsNullOrEmpty(details.MRP) && !string.IsNullOrEmpty(details.Price))
-				{
-					details.MRP = details.Price;
-				}
+				CheckDetailFields(details);
 			}
 		}
 
@@ -64,15 +56,15 @@ namespace ECommPrice
 			{
 				// Download the HTML
 				string html = client.DownloadString(flipkartURL);
-
-				// Now feed it to HTML Agility Pack:
-				HtmlDocument doc = new HtmlDocument();
-				doc.LoadHtml(html);
 				if (string.IsNullOrEmpty(html))
 				{
 					details.Title = "Page Not Found";
 					return;
 				}
+
+				// Now feed it to HTML Agility Pack:
+				HtmlDocument doc = new HtmlDocument();
+				doc.LoadHtml(html);
 
 				var titleList = doc.DocumentNode.SelectNodes("//span[@class='B_NuCI']");
 				if (titleList != null)
@@ -92,15 +84,7 @@ namespace ECommPrice
 					details.Price = priceList.LastOrDefault().InnerText.Trim();
 				}
 
-				if (string.IsNullOrEmpty(details.Title))
-				{
-					details.Title = "Page Not Found";
-				}
-				if (string.IsNullOrEmpty(details.MRP) && !string.IsNullOrEmpty(details.Price))
-				{
-					details.MRP = details.Price;
-				}
-
+				CheckDetailFields(details);
 			}
 		}
 
@@ -112,17 +96,15 @@ namespace ECommPrice
 
 				// Download the HTML
 				string html = client.DownloadString(MyntraURL);
-
-				//// Now feed it to HTML Agility Pack:
-				HtmlDocument doc = new HtmlDocument();
-				doc.LoadHtml(html);
 				if (string.IsNullOrEmpty(html))
 				{
 					details.Title = "Page Not Found";
 					return;
 				}
 
-				var titleList = doc.DocumentNode.SelectNodes("//body[@oncontextmenu='return!1']").ToList();
+				//// Now feed it to HTML Agility Pack:
+				HtmlDocument doc = new HtmlDocument();
+				doc.LoadHtml(html);
 
 				var a = Newtonsoft.Json.Linq.JObject.Parse(doc.DocumentNode.SelectNodes("//script[@type='application/ld+json']").ToList()[1].InnerText);
 				if (a != null)
@@ -137,14 +119,23 @@ namespace ECommPrice
 					details.MRP = b["pdpData"]["mrp"].ToString();
 				}
 
-				if (string.IsNullOrEmpty(details.Title))
-				{
-					details.Title = "Page Not Found";
-				}
-				if (string.IsNullOrEmpty(details.MRP) && !string.IsNullOrEmpty(details.Price))
-				{
-					details.MRP = details.Price;
-				}
+				CheckDetailFields(details);
+			}
+		}
+
+		private static void CheckDetailFields(Details details)
+		{
+			if (string.IsNullOrEmpty(details.Title))
+			{
+				details.Title = "Page Not Found";
+			}
+			if (string.IsNullOrEmpty(details.MRP) && !string.IsNullOrEmpty(details.Price))
+			{
+				details.MRP = details.Price;
+			}
+			if (string.IsNullOrEmpty(details.MRP) && string.IsNullOrEmpty(details.Price))
+			{
+				details.MRP = details.Price = "Not Available";
 			}
 		}
 	}

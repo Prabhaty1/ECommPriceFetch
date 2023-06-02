@@ -13,7 +13,7 @@ namespace ECommPrice
 		{
 			client.Headers.Add("authority", "www.amazon.in");
 			client.Headers.Add("content-type", "text/html");
-			client.Headers.Add("accept-encoding", "gzip");
+			//client.Headers.Add("accept-encoding", "gzip");
 			client.Headers.Add("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
 			client.Headers.Add("accept-language", "en-GB,en;q=0.9");
 			client.Headers.Add("cache-control", "no-cache");
