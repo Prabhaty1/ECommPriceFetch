@@ -9,6 +9,9 @@ namespace ECommPrice
 {
 	public static class Headers
 	{
+		private static readonly Random rand = new Random();
+		private static readonly object syncLock = new object();
+
 		public static void CreateHeaderForAmazon(WebClient client)
 		{
 			client.Headers.Add("authority", "www.amazon.in");
@@ -24,7 +27,7 @@ namespace ECommPrice
 			client.Headers.Add("sec-fetch-dest", "document");
 			client.Headers.Add("sec-fetch-mode", "navigate");
 			client.Headers.Add("sec-fetch-site", "same-origin");
-			client.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.57");
+			client.Headers.Add("user-agent", GetRandomUserAgent());
 			client.Headers.Add("x-location-context", "pincode=600005;source=IP");
 			client.Headers.Add("x-meta-app", "channel=web");
 			client.Headers.Add("x-requested-with", "browser");
@@ -56,6 +59,34 @@ namespace ECommPrice
 			client.Headers.Add("x-requested-with", "browser");
 			client.Headers.Add("Cookie", "bm_sz=4DE44E7353CD39F169289A2D70A4631B~YAAQXLopF5VqDFqHAQAAUKHoXhN1c94YAGwiv9baO1ZgCjQWe5VVzUGdmhe48t43JS93bXWoB2GvtgH9CGGIZOn7fAWj4bC3MemMvSlbjVRpcGAU2HVnvrQNG6+kxNpLntz4bZ3wQ2lJoJe7PAI+35APttsZ30idfylM3nvVz1YPsuH73Z6oN+FnyvVvMSlZIUXo+VcMMWzqpNjXo47GNOCrSjYp73PmhNFd3yF7JWWN7GH571+FOQstEFzMeAdrTJubhc8eXSNOKz/irbAQzf/dlpsHYvPhJJ96001UgrHOAfc=~4473921~3753524; _d_id=6e83fb7f-959f-4c1f-b61d-2221347380d9; mynt-eupv=1; at=ZXlKaGJHY2lPaUpJVXpJMU5pSXNJbXRwWkNJNklqRWlMQ0owZVhBaU9pSktWMVFpZlEuZXlKdWFXUjRJam9pTnpKbE5qbGhZemt0WkRWaVpDMHhNV1ZrTFdGa09EZ3RPVFkyT0RnNE5EWXpPVGxtSWl3aVkybGtlQ0k2SW0xNWJuUnlZUzB3TW1RM1pHVmpOUzA0WVRBd0xUUmpOelF0T1dObU55MDVaRFl5WkdKbFlUVmxOakVpTENKaGNIQk9ZVzFsSWpvaWJYbHVkSEpoSWl3aWMzUnZjbVZKWkNJNklqSXlPVGNpTENKbGVIQWlPakUyT1RZME56WTFNVGNzSW1semN5STZJa2xFUlVFaWZRLjRLWWtkYy1keTJ2YjJJa1BjYmxMeUhTQ1JvVkRGV3g1Y1lGMS1aODJXZTA=; mynt-ulc-api=pincode%3A600005; mynt-loc-src=expiry%3A1680929171598%7Csource%3AIP; _abck=AA126E0FA961DCDDA0B75EA4412BBFE3~0~YAAQXLopF6MwDVqHAQAATlIlXwlXPqxtoge4V/V1sQZJ3ip9Q2Bbd3q+OzD3cB2qkA2UnhpJvhcVDGivBObypQKx8v5V9xIqWSRpK1m6CfukNT9ldrxa5sfOewex+kkDJkIZlWowkowqMdyjbGBxhpYMIk6eaA+lOVTYlJbqbY5Hdh+5wM7kzbdKWzUQ4ESfb4HMGiFh+gtj60zbjTC1ZBpDTYwggSNRZZCkJa0s9dm1MWBFogiQv1gSfnfIng2Q3hCn58pNvDppzLWF5gp6sN08ugIOuoVdjxn+yR3lyi6Wuk5aOcAPuPVRU6EETj5YkRMylmgD626MM8z4hc4RToDkLHvdY91fDvm1wt1rA6uv/3H+ymJQ6BTKxYo5DPWwe+6Nd2LZC8tGjpE5ZgIGI0VcCN5hSa+n~-1~-1~1680932019; AKA_A2=A; _xsrf=tw6uie0sXgw2OFWkSpYKSA6MNsLGInSn; utrid=ABB4Rk4FZ0ZLWxRVZEFAMCM3Mjk2NDY4NjgkMg%3D%3D.c3cfeb1edf05268a56eecb97c863a14b");
 
+		}
+
+		private static string GetRandomUserAgent()
+		{
+			string userAgent = "";
+			var browserType = new string[] { "chrome", "firefox", };
+			var UATemplate = new Dictionary<string, string> { { "chrome", "Mozilla/5.0 ({0}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{1} Safari/537.36" }, { "firefox", "Mozilla/5.0 ({0}; rv:{1}.0) Gecko/20100101 Firefox/{1}.0" }, };
+			var OS = new string[] { "Windows NT 10.0; Win64; x64", "X11; Linux x86_64", "Macintosh; Intel Mac OS X 12_4" };
+			string OSsystem = "";
+			lock (syncLock)
+			{ // synchronize
+				OSsystem = OS[rand.Next(OS.Length)];
+				int version = rand.Next(93, 104);
+				int minor = 0;
+				int patch = rand.Next(4950, 5162);
+				int build = rand.Next(80, 212);
+				string randomBroswer = browserType[rand.Next(browserType.Length)];
+				string browserTemplate = UATemplate[randomBroswer];
+				string finalVersion = version.ToString();
+				if (randomBroswer == "chrome")
+				{
+					finalVersion = String.Format("{0}.{1}.{2}.{3}", version, minor, patch, build);
+				}
+
+				userAgent = String.Format(browserTemplate, OSsystem, finalVersion);
+			}
+
+			return userAgent;
 		}
 	}
 }
